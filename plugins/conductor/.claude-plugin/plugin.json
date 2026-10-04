@@ -1,0 +1,7 @@
+{
+  "name": "conductor",
+  "description": "Feature pipeline for solo projects: interview, plan, build, review, merge, with typed human checkpoints.",
+  "author": { "name": "Lenn Schneidewind" },
+  "license": "MIT",
+  "keywords": ["orchestration", "subagents", "workflow", "spec-driven"]
+}

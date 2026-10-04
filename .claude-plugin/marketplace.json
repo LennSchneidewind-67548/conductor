@@ -1,0 +1,12 @@
+{
+  "name": "conductor",
+  "description": "One coordinator session per feature: you give ideas, picks, decisions and reviews; subagents do the rest.",
+  "owner": { "name": "Lenn Schneidewind" },
+  "plugins": [
+    {
+      "name": "conductor",
+      "source": "./plugins/conductor",
+      "description": "Feature pipeline for solo projects: interview, plan, build, review, merge, with typed human checkpoints."
+    }
+  ]
+}
