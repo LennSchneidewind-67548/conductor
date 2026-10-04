@@ -39,6 +39,12 @@ Install it, then check:
 Reply "ok" to close P<n>, or describe what's off.
 ```
 
+## Reset (after "ok" on a phase review, when another phase follows)
+```
+P<n> closed. Ledger is up to date. To keep the next phase cheap, start it in a fresh context:
+/clear, then /conductor:feature
+```
+
 ## Sign-off (stop)
 ```
 <Feature> is built: <n> phases, PRs #a–#b.

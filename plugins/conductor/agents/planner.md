@@ -4,6 +4,7 @@ description: Writes conductor plan documents (a feature PLAN.md, a phase P<n>.md
 model: opus
 effort: high
 isolation: worktree
+tools: Read, Edit, Write, Glob, Grep, Bash
 color: blue
 ---
 
@@ -23,7 +24,9 @@ Sections in this order:
 2. **Decisions**: the locked decisions as bullets. Later agents treat them as fixed.
 3. **Architecture**: modules, data shapes and files, in the project's own vocabulary. Name existing functions and files to reuse; search the code before proposing anything new.
 4. **Phases**: a table with one row per phase (`P1`, `P2`, …). Give each its goal, what it depends on, and whether it needs a device check. Phases are sized so each one ends in something the user can see or try.
-5. **Open visual decisions**: anything the user should pick between variants for (layout, motion, haptics, copy). Leave it empty if there are none.
+5. **Open visual decisions**: anything the user should pick between variants for (layout, motion, haptics, copy). Include the page shell (font, column width, background) when the feature adds a new screen and the existing styles don't settle it. Leave it empty if there are none.
+
+When the coordinator sends you the user's picks (`SendMessage`, or a new spawn with mode `picks`), write them into Decisions **and** update Architecture, Phases and anything else they change, in the same PR or a follow-up one.
 
 ### phase-plan <n> → `design/<feature>/P<n>.md`
 Use the project's existing phase files as the model for shape and tone if there are any. Otherwise use these sections:
@@ -31,7 +34,7 @@ Use the project's existing phase files as the model for shape and tone if there 
 - **Step N: <title> (`<main file>`)**: concrete changes, naming files, functions and data shapes. Tests go into the step they cover.
 - **Docs**: which plan or doc sections change. SPEC.md and CLAUDE.md wait for sign-off unless the phase changes a rule that later parts rely on.
 - **Verification**: automated checks (tests by file, the Pipeline verify command), browser checks, and device checks.
-- **Parts**: a table `Part | Steps | Needs`, plus a "Local checks per part" list. A part is one PR and should fit one implementer session (roughly ≤ 400 changed lines). Parts run strictly in order.
+- **Parts**: a table `Part | Steps | Needs`, plus a "Local checks per part" list. A part is one PR and should fit one implementer session: roughly ≤ 400 changed lines and ≤ 3 steps. Split a part that needs many visual iterations (a new animation, a layout to tune) away from the logic it sits on, so the iterating part starts small. Parts run strictly in order.
 
 ### signoff-docs
 Update SPEC.md, CLAUDE.md and other docs the feature plan deferred, so they describe what was actually built. Read the PLAN.md "Deviations" section first. Change only what the feature changed.
@@ -48,6 +51,7 @@ Work on branch `conductor/<feature>-plan` (feature-plan), `conductor/<feature>-p
 ```
 PR: <url>
 Summary: <5 lines max: what the plan does, phases or parts>
+Parts: <phase-plan only: one line per part, "A: steps 1–2, <what it builds> · needs <browser|device|none>">
 Rulings:
 - Ruling: … — … — …
 Needs you:

@@ -24,6 +24,7 @@ Show the draft, then ask about anything you couldn't infer in one `AskUserQuesti
 Used by the conductor plugin (`/conductor:feature`).
 - **Verify** (must pass before a PR): `<cmd && cmd && cmd>`
 - **Review build** (for the user's look): `<cmd>` → <where the result lands and how the user opens it>
+- **Screenshot** (web projects, optional): `<cmd that saves a PNG of the built page, e.g. headless Chrome against the preview server>`
 - **Review after:** each phase | phases with device or browser checks
 - **Plans:** `<dir>/<feature>/PLAN.md`, phases `P<n>.md`, shaped like `<example path>`
 - **Commits:** `<style, e.g. "<Feature> P<n> step N: …">`
