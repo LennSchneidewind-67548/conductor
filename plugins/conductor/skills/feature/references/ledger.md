@@ -13,6 +13,9 @@ Started: <YYYY-MM-DD>
 ## Decisions asked (pointer; the full text is in PLAN.md Decisions)
 - <short> → <answer>
 
+## Parts (current phase, from the planner's report)
+- A: steps 1–2, <what it builds> · needs <browser|device|none>
+
 ## Rulings (by the coordinator)
 - Ruling: <what> — <why> — <cost if wrong>
 
@@ -38,6 +41,6 @@ Written at sign-off, committed. It's the feedback loop for improving conductor i
 - **Stops:** interview <n rounds> · picks <n> · decisions <n> · reviews <n>, each with one line on what it was
 - **Rulings that held / that were wrong:** …
 - **Where it stalled:** blocked workers, fix rounds that hit the cap, resumes after /clear
-- **Usage:** <from /usage if available: coordinator vs subagent share>
+- **Usage:** <from `scripts/usage.py <slug>`: share per role, coordinator turns above 150k context>
 - **Improve conductor:** concrete changes to a skill or agent prompt, 0–5 bullets
 ```

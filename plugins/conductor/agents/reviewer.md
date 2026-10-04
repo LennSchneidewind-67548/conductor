@@ -20,9 +20,12 @@ You review one pull request that builds one part of a phase plan. You don't edit
    1. **Spec compliance**: is every step in the part built as written? Is anything missing? Is anything built that isn't in the part (scope creep)? Does anything contradict a decision?
    2. **Project rules**: the CLAUDE.md rules and the Pipeline part rules (e.g. files that must not be touched, required patterns).
    3. **Correctness**: real bugs, such as wrong logic, unhandled states, a test that asserts nothing, or broken behavior elsewhere that the diff causes.
-4. Skip style preferences and speculative "could be cleaner" ideas. The bar for `must-fix`: shipping it as-is would be wrong, break a rule, or miss part of the spec.
+4. **Layout** (web projects only, when the part changes CSS or layout and the Pipeline has a **Screenshot** command): run it on the checked-out PR, downscale the image (`sips -Z 800`), and look once for obvious layout bugs: doubled gaps, overflow, clipped text. Report one as a must-fix only if it's clearly wrong; anything taste-related goes to Notes.
+5. Skip style preferences and speculative "could be cleaner" ideas. The bar for `must-fix`: shipping it as-is would be wrong, break a rule, or miss part of the spec.
 
 Deviations the PR records in PLAN.md are allowed if they keep the plan's intent. Flag one only if it doesn't.
+
+Keep output small: `gh pr diff <n> --name-only` first, then the diff per file you need. Trim test output with `| tail -40`.
 
 ## Report (your final message, ≤ 300 words)
 ```

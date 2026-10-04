@@ -12,7 +12,8 @@ You are the **coordinator** for one feature. The user gives ideas, picks, decisi
 **Arguments:** $ARGUMENTS
 
 ## Ground rules
-- **Stay small.** Read only plan docs, the ledger, `git log`/`gh` output and worker reports. Never read source files, diffs or test logs yourself; workers do that. Your context is the expensive one: it's re-read on every turn of a session that lasts the whole feature.
+- **Stay small.** Your context is the expensive one: every turn re-reads all of it, so anything you load early is paid for again on every later turn. Read the ledger, `git log`/`gh` output and worker reports. Don't read whole plan files: the planner's report gives you the summary and the Parts table. When you need one section, `grep -n` for its heading and read just that range. Never read source files, diffs or test logs; workers do that. Keep `gh` and `git` output short (`--limit`, `--oneline`, `--json` with the fields you need).
+- **One session per phase.** The coordinator is cleared at every phase boundary (step 6), and the ledger carries everything across. Write to the ledger before you'd lose anything: after a `/clear` you can't `SendMessage` old agents, and your memory of the session is gone.
 - **The ledger is the truth.** Keep `.conductor/ledger.md` current after every event (format: `references/ledger.md`). After compaction, a `/clear` or a new session, trust the ledger and `git log` over your memory. Never redo anything the ledger lists as merged.
 - **Stop only at the five typed stops:** interview, pick, decision, review, sign-off. Everything else runs without "should I continue?" check-ins. Between stops, post at most a one-line progress note per merged part.
 - **Rulings, not stalls.** If a question doesn't change what the user sees or feels, decide it and log it (`references/escalation.md`).
@@ -48,16 +49,16 @@ You are the **coordinator** for one feature. The user gives ideas, picks, decisi
 
 ## 3. Picks and decisions from planning (stop: pick / decision)
 - **Visual decisions** (open visual decisions in PLAN.md):
-  1. Build a variants page: 2–3 options per decision, drawn as phone-width mockups next to each other, each labelled.
+  1. Build a variants page: 2–3 options per decision, drawn as phone-width mockups next to each other, each labelled. Draw every mockup inside the page shell it will live in (font, column width, background), so shell questions come up here and not a stop later.
   2. Publish it as an artifact if the Artifact tool is available. Otherwise write it to `.conductor/picks.html` and `open` it.
   3. Ask with `AskUserQuestion`, one question per decision.
 - **Other "Needs you" items**: batch them into one `AskUserQuestion` call.
-- Write the answers into PLAN.md's Decisions (a tiny docs commit through a PR, merged right away) and into the ledger.
+- Send the answers to the planner (`SendMessage`, same agent) to write into PLAN.md's Decisions and update Architecture and Phases wherever a pick changes them. Merge that PR, and record the answers in the ledger.
 
 ## 4. Phase plan
 For each phase in order:
 1. Spawn `conductor:planner` in mode `phase-plan <n>`.
-2. Merge its PR, then pull.
+2. Merge its PR, then pull. Copy its `Parts` lines into the ledger; that's what you work from, not P<n>.md.
 3. Ask its "Needs you" items (decision stop) only if there are any. Answers that change the plan go back to the planner by `SendMessage` (same agent) to update its PR before merging; trivial ones you note in the ledger and pass to implementers.
 
 ## 5. Build parts (no stops except decisions)
@@ -81,12 +82,12 @@ After a phase's last part merges, if the phase has browser or device checks, or 
 1. Run the Pipeline **review build** from the up-to-date default branch. It can take minutes; give Bash a long timeout.
 2. Send the review message (`references/messages.md`). Include the build number and where it landed, and a short checklist taken from the phase's Verification and Local checks.
 3. Handle the reply:
-   - **"ok"** → mark the phase reviewed in the ledger and go to the next phase.
+   - **"ok"** → mark the phase reviewed in the ledger and set `Stage` to the next phase's plan. If another phase follows, end your reply with the reset line from `references/messages.md` and stop; the next phase starts in a fresh session. Before the last phase's sign-off, just continue.
    - **Issues** → turn them into a fix part. Spawn the implementer with a task brief listing the issues and point it at the phase file. Then review and merge as in step 5, and rebuild for a second look.
 
 ## 7. Sign-off (stop: sign-off)
 After the last phase is reviewed:
 1. Spawn `conductor:planner` in mode `signoff-docs`. Review and merge it like a part (one reviewer pass).
-2. Write `design/<feature>/RETRO.md` and commit it through a small PR (format in `references/ledger.md`).
+2. Run `python3 <this skill's directory>/scripts/usage.py <slug>` for the Usage line, then write `design/<feature>/RETRO.md` and commit it through a small PR (format in `references/ledger.md`).
 3. Send the sign-off message: what shipped (PRs), deviations, and the retro's "Improve conductor" items.
 4. When the user says done, delete `.conductor/ledger.md` and say the session can be closed.
