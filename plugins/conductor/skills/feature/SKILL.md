@@ -19,9 +19,10 @@ You are the **coordinator** for one feature. The user gives ideas, picks, decisi
 - **Rulings, not stalls.** If a question doesn't change what the user sees or feels, decide it and log it (`references/escalation.md`).
 - **One stream.** One worker at a time, parts in order. Before spawning any worker, make sure the main checkout is on the default branch and up to date (`git switch <default> && git pull --ff-only`).
 - Ask with `AskUserQuestion`: concrete options, recommended first, at most 4 questions per call. Wording templates are in `references/messages.md`.
+- **Breaks.** If the user runs `/conductor:break` or asks to pause, stop at the next safe point as that skill says: start nothing new, let a running worker return, checkpoint the ledger.
 
 ## 0. Start or resume
-1. If `.conductor/ledger.md` exists, read it, check `git log --oneline -15` and `gh pr list --state all --limit 10`, reconcile the two, and continue at the ledger's `Stage`. Tell the user in one line where you're picking up. Ignore $ARGUMENTS unless it clearly starts a *different* feature; in that case ask whether to park the current one.
+1. If `.conductor/ledger.md` exists, read it, check `git log --oneline -15` and `gh pr list --state all --limit 10`, reconcile the two, and continue at the ledger's `Stage`. If the header has `Paused:`, its `next:` is the first thing to do (an open question gets asked, a pending review gets spawned); remove the `Paused:` line once you start on it. Tell the user in one line where you're picking up. Ignore $ARGUMENTS unless it clearly starts a *different* feature; in that case ask whether to park the current one.
 2. Otherwise, read the `## Pipeline` section of the project's CLAUDE.md. If it's missing, tell the user to run `/conductor:setup` first and stop.
 3. Make sure `.conductor/` is git-ignored, then create the ledger.
 
@@ -69,13 +70,13 @@ For each part in the phase's Parts table, in order:
    - `BLOCKED` → try once to unblock it: missing context you can supply, or a re-spawn on `opus`. If it's still blocked, decision stop with what's wrong and the options.
    - `DONE` / `DONE_WITH_CONCERNS` → step 3.
 3. Spawn `conductor:reviewer` with the PR, the phase file, the part, and any concerns the implementer named. For a large or risky diff, pass `model: opus` on the spawn.
-4. On `CHANGES`: send the must-fix list to the **same** implementer by `SendMessage`. At most **2 fix rounds**. After that, rule on what's left (fix it in a follow-up part, or accept it with a note in the ledger), or ask if it changes what the user sees.
+4. On `CHANGES`: first post the must-fix list as a PR comment headed `conductor review round <r>` (`gh pr comment <n> --body-file -`) and log `review CHANGES (round <r>)`, so the findings survive a `/clear` or a break. Then send it to the **same** implementer by `SendMessage`. At most **2 fix rounds**, counted from the ledger. After that, rule on what's left (fix it in a follow-up part, or accept it with a note in the ledger), or ask if it changes what the user sees.
 5. On `APPROVE`:
    1. `gh pr merge <n> --merge --delete-branch`, then pull.
    2. If the implementer's worktree still exists, remove it: `git worktree list`, then `git worktree remove <path>`.
    3. Update the ledger and post one line: `P<n> part <X> merged (#<pr>)`.
 
-After a `/clear` or a new session, you can't `SendMessage` agents from the old session. Spawn a fresh implementer and tell it to continue the existing branch and PR.
+After a `/clear` or a new session, you can't `SendMessage` agents from the old session. Spawn a fresh implementer and tell it to continue the existing branch and PR. If the ledger shows an unfixed review round, tell it to fix the must-fix list in the latest `conductor review round` comment on the PR.
 
 ## 6. Review (stop: review)
 After a phase's last part merges, if the phase has browser or device checks, or the Pipeline marks every phase for review:

@@ -40,7 +40,7 @@ flowchart TD
 - **planner** (Opus) writes `PLAN.md` and one `P<n>.md` per phase. It decides internal questions itself and lists the visible ones for you.
 - **implementer** (Sonnet, its own git worktree) builds one part: commits per step, runs the project's verify command, opens a PR.
 - **reviewer** (Sonnet, read-only) checks the PR against the phase plan, the project's rules and correctness.
-- **`.conductor/ledger.md`** (git-ignored) records every event, so a `/clear`, a compaction or a new session picks up exactly where it stopped.
+- **`.conductor/ledger.md`** (git-ignored) records every event, so a `/clear`, a compaction, a `/conductor:break` or a new session picks up exactly where it stopped.
 - **One coordinator session per phase.** After you say "ok" on a phase review, conductor asks you to `/clear` and run `/conductor:feature` again. The ledger carries everything over, and the next phase starts small instead of re-reading the last one's history on every turn.
 - **Token budget.** The coordinator reads only reports and the ledger, never whole plans or code. Workers get only the tools they need, trim command output and downscale screenshots. `skills/feature/scripts/usage.py <slug>` reports where a feature's tokens went, and the retro includes it.
 
@@ -54,6 +54,8 @@ claude plugin install conductor@conductor
 ```
 
 Then, in a project: `/conductor:setup` once, and `/conductor:feature <idea>` per feature. `/conductor:status` shows where things stand.
+
+To save usage for other work, run `/conductor:break` in the coordinator session. It starts nothing new, lets the running worker finish, saves state to the ledger (review findings go on the PR as a comment), and tells you when it's safe to close. `/conductor:feature` in a fresh session picks up from there.
 
 It works best in auto mode, with `gh` authenticated and a project verify command that's trustworthy enough to merge on.
 

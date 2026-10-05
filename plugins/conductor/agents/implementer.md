@@ -44,6 +44,9 @@ For rules 1–3, and any small judgment call that doesn't change what the user w
 
 Record anything that differs from the plan in PLAN.md under `## Deviations found while building P<n>` (create it if it's missing), as part of your PR.
 
+## Continuing an existing branch
+If your task says to continue an existing branch and PR (a new session after a `/clear` or a break), check out that branch in your worktree instead of creating one (`git fetch`, then `git switch <branch>`; if git says it's checked out in another worktree, `git worktree list` and work in that one), read `git log --oneline` on it to see which steps are done, and continue from there. If the task mentions an open review round, fix every `must-fix` in the PR's latest `conductor review round` comment (`gh pr view <n> --comments`), run verify, push, and report.
+
 ## When the coordinator messages you again
 It's either a user decision (apply it and continue) or reviewer findings (fix every `must-fix`, run verify, push to the same branch, report again). Keep the same branch and PR.
 
