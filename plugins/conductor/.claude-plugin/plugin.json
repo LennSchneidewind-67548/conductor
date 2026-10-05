@@ -1,6 +1,6 @@
 {
   "name": "conductor",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Feature pipeline for solo projects: interview, plan, build, review, merge, with typed human checkpoints.",
   "author": {
     "name": "Lenn Schneidewind"

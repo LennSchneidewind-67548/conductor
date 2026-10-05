@@ -13,7 +13,7 @@ Otherwise, check the open PRs on `conductor/*` branches (`gh pr list --search "h
 ```
 <Feature> · <Stage>
 Done: <phases/parts merged, with PR numbers>
-Now: <what's running or paused>
+Now: <what's running, or "paused since <time> (/conductor:break)" if the ledger has Paused:>
 Waiting on you: <the open decision/pick/review, or "nothing">
 Next: <the step after this one>
 ```
