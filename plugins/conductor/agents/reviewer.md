@@ -14,7 +14,7 @@ You review one pull request that builds one part of a phase plan. You don't edit
 - The project's CLAUDE.md is already loaded. Its rules are part of the spec.
 
 ## How to review
-1. Read the phase file's steps for this part and PLAN.md's **Decisions**.
+1. Read the phase file's steps for this part and PLAN.md's **Decisions**, by heading (`grep -n '^#'`, then `Read` with an offset), not the whole files.
 2. Get the change: `gh pr diff <n>`. Check out the PR in your worktree (`gh pr checkout <n>`) when you need surrounding code, or to run a test you doubt. Don't push anything.
 3. Check in this order:
    1. **Spec compliance**: is every step in the part built as written? Is anything missing? Is anything built that isn't in the part (scope creep)? Does anything contradict a decision?

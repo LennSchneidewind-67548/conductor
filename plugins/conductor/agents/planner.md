@@ -34,7 +34,9 @@ Use the project's existing phase files as the model for shape and tone if there 
 - **Step N: <title> (`<main file>`)**: concrete changes, naming files, functions and data shapes. Tests go into the step they cover.
 - **Docs**: which plan or doc sections change. SPEC.md and CLAUDE.md wait for sign-off unless the phase changes a rule that later parts rely on.
 - **Verification**: automated checks (tests by file, the Pipeline verify command), browser checks, and device checks.
-- **Parts**: a table `Part | Steps | Needs`, plus a "Local checks per part" list. A part is one PR and should fit one implementer session: roughly ≤ 400 changed lines and ≤ 3 steps. Split a part that needs many visual iterations (a new animation, a layout to tune) away from the logic it sits on, so the iterating part starts small. Parts run strictly in order.
+- **Parts**: a table `Part | Steps | Needs`, plus a "Local checks per part" list. A part is one PR and should fit one implementer session: roughly ≤ 400 changed lines and ≤ 3 steps. Split a part that needs many visual iterations (a new animation, a layout to tune) away from the logic it sits on, so the iterating part starts small. Don't make a part that only wires up, registers or ships what an earlier part built: every part pays for its setup and plan reading again, so fold mechanical steps into the part they finish. Parts run strictly in order.
+
+Implementers read only their own slice of the plan, found by heading. So give every step its own heading, write each step so it stands alone (name the files and data shapes again instead of saying "as in step 2"), and keep the Parts table and Local checks under headings of their own.
 
 ### signoff-docs
 Update SPEC.md, CLAUDE.md and other docs the feature plan deferred, so they describe what was actually built. Read the PLAN.md "Deviations" section first. Change only what the feature changed.

@@ -23,7 +23,7 @@ Paused: <YYYY-MM-DD HH:MM> · next: <pending>   (only while paused by /conductor
 ## Log
 - <YYYY-MM-DD HH:MM> PLAN merged #12
 - <…> P1 plan merged #13
-- <…> P1 part A implementer <agent-id> on conductor/<slug>-p1-a → PR #14
+- <…> P1 part A implementer <agent-id> (sonnet) on conductor/<slug>-p1-a → PR #14
 - <…> P1 part A review CHANGES (round 1) · must-fix posted on #14
 - <…> paused · next: fix round 1 on #14
 - <…> P1 part A merged #14

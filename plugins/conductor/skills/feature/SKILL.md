@@ -64,7 +64,7 @@ For each phase in order:
 
 ## 5. Build parts (no stops except decisions)
 For each part in the phase's Parts table, in order:
-1. Spawn `conductor:implementer` with the phase file, the part, the locked decisions, and the user decisions relevant to this part. Record its agent id and branch in the ledger.
+1. Spawn `conductor:implementer` with the phase file, the part, the locked decisions, and the user decisions relevant to this part. Pass paths and the part name, not plan text: it reads its own slice. Leave the model at the agent's default (Sonnet); the only override is the `opus` re-spawn for `BLOCKED` below. Several small fix rounds on Sonnet still cost less than one Opus part. Record its agent id, model and branch in the ledger.
 2. On its report:
    - `NEEDS_DECISION` → decision stop (one compact question with its default), then resume it with `SendMessage` and the answer.
    - `BLOCKED` → try once to unblock it: missing context you can supply, or a re-spawn on `opus`. If it's still blocked, decision stop with what's wrong and the options.
@@ -78,13 +78,19 @@ For each part in the phase's Parts table, in order:
 
 After a `/clear` or a new session, you can't `SendMessage` agents from the old session. Spawn a fresh implementer and tell it to continue the existing branch and PR. If the ledger shows an unfixed review round, tell it to fix the must-fix list in the latest `conductor review round` comment on the PR.
 
-## 6. Review (stop: review)
+## 6. Review (stop: review) and phase boundary
 After a phase's last part merges, if the phase has browser or device checks, or the Pipeline marks every phase for review:
 1. Run the Pipeline **review build** from the up-to-date default branch. It can take minutes; give Bash a long timeout.
 2. Send the review message (`references/messages.md`). Include the build number and where it landed, and a short checklist taken from the phase's Verification and Local checks.
 3. Handle the reply:
-   - **"ok"** → mark the phase reviewed in the ledger and set `Stage` to the next phase's plan. If another phase follows, end your reply with the reset line from `references/messages.md` and stop; the next phase starts in a fresh session. Before the last phase's sign-off, just continue.
+   - **"ok"** → mark the phase reviewed in the ledger, then go to the phase boundary.
    - **Issues** → turn them into a fix part. Spawn the implementer with a task brief listing the issues and point it at the phase file. Then review and merge as in step 5, and rebuild for a second look.
+
+A phase with no review goes straight to the phase boundary once its last part merges.
+
+**Phase boundary.** Set `Stage` to the next phase's plan. If another phase follows, end your reply with the reset line from `references/messages.md` and stop: the next phase starts in a fresh session, whether or not this phase had a review. Only before the last phase's sign-off do you just continue.
+
+**Mid-phase.** If the session grows long inside a phase (many fix rounds or decisions, roughly 150k context), checkpoint the ledger after the next merge and send the reset line there too. Every part boundary is safe to resume from.
 
 ## 7. Sign-off (stop: sign-off)
 After the last phase is reviewed:
