@@ -39,11 +39,12 @@ Install it, then check:
 Reply "ok" to close P<n>, or describe what's off.
 ```
 
-## Reset (after "ok" on a phase review, when another phase follows)
+## Reset (at a phase boundary when another phase follows, or mid-phase when the session has grown long)
 ```
 P<n> closed. Ledger is up to date. To keep the next phase cheap, start it in a fresh context:
 /clear, then /conductor:feature
 ```
+Mid-phase, start with `P<n> part <X> merged. This session has grown long.` instead of `P<n> closed.`
 
 ## Sign-off (stop)
 ```
