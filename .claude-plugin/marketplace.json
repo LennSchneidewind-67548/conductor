@@ -1,7 +1,7 @@
 {
   "name": "conductor",
   "description": "One coordinator session per feature: you give ideas, picks, decisions and reviews; subagents do the rest.",
-  "owner": { "name": "Lenn Schneidewind" },
+  "owner": { "name": "Lenn Louis Schneidewind" },
   "plugins": [
     {
       "name": "conductor",
